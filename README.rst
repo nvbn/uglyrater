@@ -1,7 +1,7 @@
 UglyRater
 ==========
 
-A special and ugly engine for `Уебаны.EU <http://уебаны.eu/>`_.  written in django.
+A special and ugly engine for `Уебаны.EU <http://уебаны.eu/>`_  written in django.
 
 Install
 =======
