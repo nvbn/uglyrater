@@ -25,7 +25,7 @@ class SpecialModelEncoder(json.JSONEncoder):
 
     def default(self, obj):
         """Prepare for json"""
-        if isinstance(obj, Model):
+        if isinstance(obj, Model) and hasattr(obj, 'to_json'):
             return obj.to_json()
         try:
             return map(lambda item: self.default(item), obj)
@@ -46,7 +46,10 @@ class Serializable(object):
         if not len(args):
             args = self.json_fields
         return dict(map(lambda arg: (
-            arg, SpecialModelEncoder().default(getattr(self, arg, None))
+            arg, SpecialModelEncoder().default(reduce(
+                lambda obj, attr: getattr(obj, attr),
+                [self] + arg.split('__')
+            ))
         ),args))
 
     def set_fields(self, *args):
