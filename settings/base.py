@@ -60,8 +60,9 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.sitemaps',
     'django.contrib.sites',
-    'django_evolution',
+    'uglyrate',
+    'serializator',
 )
-
+ROOT_URLCONF='urls'
 SITE_ID = 1
 SITE_URL = 'http://localhost:8000'

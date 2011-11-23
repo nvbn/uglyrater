@@ -14,21 +14,3 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
-
-from django.contrib.auth.decorators import login_required
-from uglyrate.forms import RateForm
-from serializator.utils import ajax_request
-
-@login_required
-@ajax_request
-def create(request):
-    if request.method == 'POST':
-        form = RateForm(request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return {
-                'error': None,
-                'user': form.cleaned_data['enemy'].set_fileds(
-                    'id', 'rate_count', 'username',
-                )
-            }

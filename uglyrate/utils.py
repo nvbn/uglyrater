@@ -15,20 +15,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-from django.contrib.auth.decorators import login_required
-from uglyrate.forms import RateForm
-from serializator.utils import ajax_request
+from django.utils.translation import ugettext as _
 
-@login_required
-@ajax_request
-def create(request):
-    if request.method == 'POST':
-        form = RateForm(request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return {
-                'error': None,
-                'user': form.cleaned_data['enemy'].set_fileds(
-                    'id', 'rate_count', 'username',
-                )
-            }
+class RatingDisabled(Exception):
+    """User disable rating exception"""
+
+    def __init__(self, user):
+        super(RatingDisabled, self).__init__(_(u'%(user)s disable ratings!') % {
+            'user': user,
+        })
+
+
+class RateAlreadyExist(Exception):
+    """User already rated exception"""
+
+    def __init__(self, user):
+        super(RateAlreadyExist, self).__init__(_(u'You already rate %(user)s') % {
+            'user': user,
+        })
