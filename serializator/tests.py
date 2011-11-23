@@ -21,24 +21,31 @@ from django.utils.translation import ugettext as _
 import unittest
 
 class TestModel(models.Model, Serializable):
+    """Fake test models"""
     testfield = models.IntegerField()
 
     def __init__(self, *args, **kwargs):
+        """Initiale with json fields"""
         super(TestModel, self).__init__(*args, **kwargs)
         self.json_fields = ['id', 'testfield']
 
 
 class TestModel2(models.Model, Serializable):
+    """Test model with foreign key"""
     testfield = models.IntegerField()
     testfield1 = models.ForeignKey(TestModel)
 
     def __init__(self, *args, **kwargs):
-            super(TestModel2, self).__init__(*args, **kwargs)
-            self.json_fields = ['id', 'testfield', 'testfield1']
+        """Initiale with json fields"""
+        super(TestModel2, self).__init__(*args, **kwargs)
+        self.json_fields = ['id', 'testfield', 'testfield1']
 
 
 class SerializatorTestCase(unittest.TestCase):
+    """Serializator tests"""
+
     def setUp(self):
+        """Create test objects"""
         self.testmodels = map(lambda number: TestModel.objects.create(
             testfield=number
         ), range(100))
@@ -48,6 +55,7 @@ class SerializatorTestCase(unittest.TestCase):
         ), self.testmodels)
 
     def testOnce(self):
+        """Test single object serialization"""
         for obj in self.testmodels:
             self.assertEqual(
                 SpecialModelEncoder().default(obj),
@@ -71,6 +79,7 @@ class SerializatorTestCase(unittest.TestCase):
             )
 
     def testQS(self):
+        """Test qs and list serialization"""
         result = SpecialModelEncoder().default(self.testmodels)
         for obj in self.testmodels:
             self.assertIn({
