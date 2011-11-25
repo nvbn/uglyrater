@@ -25,7 +25,7 @@ import hashlib
 User.add_to_class('rate_count', models.PositiveIntegerField(default=0, verbose_name=_('rate count')))
 User.add_to_class('ignored', models.BooleanField(default=False, verbose_name=_('rate ignore')))
 User.to_json = Serializable.to_json
-User.set_fields = Serializable.set_fields
+User.values = Serializable.values
 User.json_fields = ['id', 'username']
 
 class RateManager(models.Manager):

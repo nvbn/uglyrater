@@ -18,6 +18,7 @@
 from functools import wraps
 import json
 from django.db.models import Model
+from django.db.models.query import QuerySet
 from django.http import HttpResponse
 
 class SpecialModelEncoder(json.JSONEncoder):
@@ -27,20 +28,16 @@ class SpecialModelEncoder(json.JSONEncoder):
         """Prepare for json"""
         if isinstance(obj, Model) and hasattr(obj, 'to_json'):
             return obj.to_json()
+        if type(obj) in (list, tuple, QuerySet):
+            obj = map(lambda item: self.default(item), obj)
         try:
-            return map(lambda item: self.default(item), obj)
+            return super(SpecialModelEncoder, self).default(obj)
         except TypeError:
-            try:
-                return json.JSONEncoder.default(self, obj)
-            except TypeError:
-                return obj
+            return obj
 
 
 class Serializable(object):
     """Serializable class"""
-
-    def __init__(self):
-        self.json_fields = []
 
     def to_json(self, *args):
         if not len(args):
@@ -52,10 +49,9 @@ class Serializable(object):
             ))
         ),args))
 
-    def set_fields(self, *args):
+    def values(self, *args):
         """Set fields for serialize"""
-        self.json_fields = args
-        return self
+        return self.to_json(*args)
 
 
 class JsonResponse(HttpResponse):#modified from annoying

@@ -22,23 +22,15 @@ import unittest
 
 class TestModel(models.Model, Serializable):
     """Fake test models"""
+    json_fields = ['id', 'testfield']
     testfield = models.IntegerField()
-
-    def __init__(self, *args, **kwargs):
-        """Initiale with json fields"""
-        super(TestModel, self).__init__(*args, **kwargs)
-        self.json_fields = ['id', 'testfield']
 
 
 class TestModel2(models.Model, Serializable):
     """Test model with foreign key"""
+    json_fields = ['id', 'testfield', 'testfield1']
     testfield = models.IntegerField()
     testfield1 = models.ForeignKey(TestModel)
-
-    def __init__(self, *args, **kwargs):
-        """Initiale with json fields"""
-        super(TestModel2, self).__init__(*args, **kwargs)
-        self.json_fields = ['id', 'testfield', 'testfield1']
 
 
 class SerializatorTestCase(unittest.TestCase):
@@ -110,3 +102,21 @@ class SerializatorTestCase(unittest.TestCase):
                     'id': obj.testfield1.id
                 }, 'id': obj.id,
             }, result, _('Serialize of qs with foreign key not work!'))
+
+    def testWithValues(self):
+        """Test serialization with specified values"""
+        for obj in self.testmodels:
+            self.assertEqual(
+                SpecialModelEncoder().default(obj.values('id')), {
+                    'id': obj.id,
+                }, _('Serialization with values failed!')
+            )
+        for obj in self.testmodels2:
+            self.assertEqual(
+                SpecialModelEncoder().default(obj.values('testfield', 'testfield1__id')), {
+                    'testfield': obj.testfield,
+                    'testfield1__id': obj.testfield1.id,
+                }, _('Serialization objects with foreign with values failed!')
+            )
+
+
