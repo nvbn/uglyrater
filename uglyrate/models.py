@@ -30,9 +30,9 @@ User.add_to_class(
     'ignored',
     models.BooleanField(default=False, verbose_name=_('rate ignore'))
 )
-User.to_json = Serializable.to_json
+User.serialize = Serializable.serialize
 User.values = Serializable.values
-User.json_fields = ['id', 'username']
+User.serialize_fields = ['id', 'username']
 
 
 class RateManager(models.Manager):

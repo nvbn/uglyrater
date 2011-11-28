@@ -15,13 +15,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-from django.conf.urls.defaults import patterns, url
+from django.contrib import admin
+from uglypages.models import Page
 
-urlpatterns = patterns('',
-    url(r'^create/$', 'uglyrate.views.create', name='uglyrate_create'),
-    url(
-        r'^get_top/(?P<offset>\d+)/(?P<count>\d+)/',
-        'uglyrate.views.get_top',
-        name='uglyrate_get_top'
-    ),
-)
+
+admin.site.register(Page)

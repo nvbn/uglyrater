@@ -16,6 +16,7 @@
 # MA 02110-1301, USA.
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from uglyrate.forms import RateForm
 from serializator.utils import ajax_request
 
@@ -23,6 +24,7 @@ from serializator.utils import ajax_request
 @login_required
 @ajax_request
 def create(request):
+    """Create new rate"""
     if request.method == 'POST':
         form = RateForm(request.user, request.POST)
         if form.is_valid():
@@ -33,3 +35,14 @@ def create(request):
                     'id', 'rate_count', 'username',
                 )
             }
+
+
+@ajax_request
+def get_top(request, offset=0, count=100):
+    """Get ugliest users"""
+    if offset < 0:
+        offset = 0
+    count = 100 if 500 < count <= 0 else count
+    return User.objects.order_by('-rate_count').values(
+        'id', 'rate_count', 'username'
+    )[offset:][:count]

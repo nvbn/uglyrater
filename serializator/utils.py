@@ -27,8 +27,8 @@ class SpecialModelEncoder(json.JSONEncoder):
 
     def default(self, obj):
         """Prepare for json"""
-        if isinstance(obj, Model) and hasattr(obj, 'to_json'):
-            return obj.to_json()
+        if isinstance(obj, Model) and hasattr(obj, 'serialize'):
+            return obj.serialize()
         if type(obj) in (list, tuple, QuerySet):
             obj = map(lambda item: self.default(item), obj)
         try:
@@ -40,9 +40,9 @@ class SpecialModelEncoder(json.JSONEncoder):
 class Serializable(object):
     """Serializable class"""
 
-    def to_json(self, *args):
+    def serialize(self, *args):
         if not len(args):
-            args = self.json_fields
+            args = self.serialize_fields
         return dict(map(lambda arg: (
             arg, SpecialModelEncoder().default(reduce(
                 lambda obj, attr: getattr(obj, attr),
@@ -52,7 +52,7 @@ class Serializable(object):
 
     def values(self, *args):
         """Set fields for serialize"""
-        return self.to_json(*args)
+        return self.serialize(*args)
 
 
 class JsonResponse(HttpResponse):  # modified from annoying

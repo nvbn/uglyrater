@@ -14,3 +14,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
+
+from annoying.decorators import render_to
+from django.shortcuts import get_object_or_404
+from uglypages.models import Page
+
+
+@render_to('uglypages/page.html')
+def page(request, url):
+    """Get page by url"""
+    return get_object_or_404(Page, url=url).values(
+        'title',
+        'content',
+    )

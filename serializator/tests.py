@@ -23,13 +23,13 @@ import unittest
 
 class TestModel(models.Model, Serializable):
     """Fake test models"""
-    json_fields = ['id', 'testfield']
+    serialize_fields = ['id', 'testfield']
     testfield = models.IntegerField()
 
 
 class TestModel2(models.Model, Serializable):
     """Test model with foreign key"""
-    json_fields = ['id', 'testfield', 'testfield1']
+    serialize_fields = ['id', 'testfield', 'testfield1']
     testfield = models.IntegerField()
     testfield1 = models.ForeignKey(TestModel)
 
