@@ -22,11 +22,18 @@ from uglyrate.utils import RatingDisabled, RateAlreadyExist
 from serializator.utils import Serializable
 import hashlib
 
-User.add_to_class('rate_count', models.PositiveIntegerField(default=0, verbose_name=_('rate count')))
-User.add_to_class('ignored', models.BooleanField(default=False, verbose_name=_('rate ignore')))
+User.add_to_class(
+    'rate_count',
+    models.PositiveIntegerField(default=0, verbose_name=_('rate count'))
+)
+User.add_to_class(
+    'ignored',
+    models.BooleanField(default=False, verbose_name=_('rate ignore'))
+)
 User.to_json = Serializable.to_json
 User.values = Serializable.values
 User.json_fields = ['id', 'username']
+
 
 class RateManager(models.Manager):
     """Manager for Rate model"""
@@ -43,8 +50,8 @@ class RateManager(models.Manager):
             kwargs['user'].rate_count += 1
             kwargs['user'].save()
         return result
-        
-        
+
+
 class Rate(models.Model):
     """Rates model"""
     hash = models.CharField(max_length=32, verbose_name=_('hash'), unique=True)

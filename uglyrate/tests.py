@@ -22,6 +22,7 @@ from uglyrate.models import Rate
 from uglyrate.utils import RateAlreadyExist, RatingDisabled
 from uglyrate.forms import RateForm
 
+
 class RateTestCase(unittest.TestCase):
     """Test rates"""
 
@@ -77,7 +78,9 @@ class RateTestCase(unittest.TestCase):
         for num, user in enumerate(self.users[:20]):
             user.ignored = True
             user.save()
-            form = RateForm(user, {'enemy': self.users[num -1]})
+            form = RateForm(user, {
+                'enemy': self.users[num - 1]
+            })
             self.assertIs(
                 form.is_valid(),
                 False,

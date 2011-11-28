@@ -21,6 +21,7 @@ from django.utils.translation import ugettext as _
 from uglyrate.models import Rate
 from uglyrate.utils import RatingDisabled, RateAlreadyExist
 
+
 class RateForm(forms.ModelForm):
     """Form for creating rates"""
     enemy = forms.ModelChoiceField(User, required=True, label=_('user'))

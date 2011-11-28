@@ -17,19 +17,24 @@
 
 from django.utils.translation import ugettext as _
 
+
 class RatingDisabled(Exception):
     """User disable rating exception"""
 
     def __init__(self, user):
-        super(RatingDisabled, self).__init__(_(u'%(user)s disable ratings!') % {
-            'user': user,
-        })
+        super(RatingDisabled, self).__init__(
+            _(u'%(user)s disable ratings!') % {
+                'user': user,
+            }
+        )
 
 
 class RateAlreadyExist(Exception):
     """User already rated exception"""
 
     def __init__(self, user):
-        super(RateAlreadyExist, self).__init__(_(u'You already rate %(user)s') % {
-            'user': user,
-        })
+        super(RateAlreadyExist, self).__init__(
+            _(u'You already rate %(user)s') % {
+                'user': user,
+            }
+        )

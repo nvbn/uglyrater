@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from uglyrate.forms import RateForm
 from serializator.utils import ajax_request
 
+
 @login_required
 @ajax_request
 def create(request):

@@ -21,6 +21,7 @@ from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 
+
 class SpecialModelEncoder(json.JSONEncoder):
     """Special encoder"""
 
@@ -47,24 +48,29 @@ class Serializable(object):
                 lambda obj, attr: getattr(obj, attr),
                 [self] + arg.split('__')
             ))
-        ),args))
+        ), args))
 
     def values(self, *args):
         """Set fields for serialize"""
         return self.to_json(*args)
 
 
-class JsonResponse(HttpResponse):#modified from annoying
+class JsonResponse(HttpResponse):  # modified from annoying
     """
-     HttpResponse descendant, which return response with ``application/json`` mimetype.
+    HttpResponse descendant, which return response with
+    ``application/json`` mimetype.
     """
     def __init__(self, data):
-        super(JsonResponse, self).__init__(content=SpecialModelEncoder().encode(data), mimetype='application/json')
+        super(JsonResponse, self).__init__(
+            content=SpecialModelEncoder().encode(data),
+            mimetype='application/json'
+        )
 
 
 def ajax_request(func):
     """
-    If view returned serializable dict, returns JsonResponse with this dict as content.
+    If view returned serializable dict,
+    returns JsonResponse with this dict as content.
 
     example:
 

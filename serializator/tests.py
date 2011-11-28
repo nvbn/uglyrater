@@ -20,6 +20,7 @@ from serializator.utils import Serializable, SpecialModelEncoder
 from django.utils.translation import ugettext as _
 import unittest
 
+
 class TestModel(models.Model, Serializable):
     """Fake test models"""
     json_fields = ['id', 'testfield']
@@ -113,10 +114,10 @@ class SerializatorTestCase(unittest.TestCase):
             )
         for obj in self.testmodels2:
             self.assertEqual(
-                SpecialModelEncoder().default(obj.values('testfield', 'testfield1__id')), {
+                SpecialModelEncoder().default(
+                    obj.values('testfield', 'testfield1__id')
+                ), {
                     'testfield': obj.testfield,
                     'testfield1__id': obj.testfield1.id,
                 }, _('Serialization objects with foreign with values failed!')
             )
-
-
