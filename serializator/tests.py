@@ -17,7 +17,6 @@
 
 from django.db import models
 from serializator.utils import Serializable, SpecialModelEncoder
-from django.utils.translation import ugettext as _
 import unittest
 
 
@@ -56,7 +55,7 @@ class SerializatorTestCase(unittest.TestCase):
                     'testfield': obj.testfield,
                     'id': obj.id,
                 },
-                _('Serialization failed!')
+                'Serialization failed!'
             )
         for obj in self.testmodels2:
             self.assertEqual(
@@ -68,7 +67,7 @@ class SerializatorTestCase(unittest.TestCase):
                         'id': obj.testfield1.id,
                     }, 'id': obj.id,
                 },
-                _('Serialization objects with foreign failed!')
+                'Serialization objects with foreign failed!'
             )
 
     def testQS(self):
@@ -78,7 +77,7 @@ class SerializatorTestCase(unittest.TestCase):
             self.assertIn({
                 'testfield': obj.testfield,
                 'id': obj.id,
-            }, result, _('Serialize of list not work!'))
+            }, result, 'Serialize of list not work!')
         result = SpecialModelEncoder().default(self.testmodels2)
         for obj in self.testmodels2:
             self.assertIn({
@@ -87,13 +86,13 @@ class SerializatorTestCase(unittest.TestCase):
                     'testfield': obj.testfield1.testfield,
                     'id': obj.testfield1.id
                 }, 'id': obj.id,
-            }, result, _('Serialize of list with foreign key not work!'))
+            }, result, 'Serialize of list with foreign key not work!')
         result = SpecialModelEncoder().default(TestModel.objects.all())
         for obj in TestModel.objects.all():
             self.assertIn({
                 'testfield': obj.testfield,
                 'id': obj.id,
-            }, result, _('Serialize of qs not work!'))
+            }, result, 'Serialize of qs not work!')
         result = SpecialModelEncoder().default(TestModel2.objects.all())
         for obj in TestModel2.objects.all():
             self.assertIn({
@@ -102,7 +101,7 @@ class SerializatorTestCase(unittest.TestCase):
                     'testfield': obj.testfield1.testfield,
                     'id': obj.testfield1.id
                 }, 'id': obj.id,
-            }, result, _('Serialize of qs with foreign key not work!'))
+            }, result, 'Serialize of qs with foreign key not work!')
 
     def testWithValues(self):
         """Test serialization with specified values"""
@@ -110,7 +109,7 @@ class SerializatorTestCase(unittest.TestCase):
             self.assertEqual(
                 SpecialModelEncoder().default(obj.values('id')), {
                     'id': obj.id,
-                }, _('Serialization with values failed!')
+                }, 'Serialization with values failed!'
             )
         for obj in self.testmodels2:
             self.assertEqual(
@@ -118,6 +117,8 @@ class SerializatorTestCase(unittest.TestCase):
                     obj.values('testfield', 'testfield1__id')
                 ), {
                     'testfield': obj.testfield,
-                    'testfield1__id': obj.testfield1.id,
-                }, _('Serialization objects with foreign with values failed!')
+                    'testfield1': {
+                        'id': obj.testfield1.id,
+                    },
+                }, 'Serialization objects with foreign with values failed!'
             )

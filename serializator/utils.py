@@ -31,6 +31,19 @@ class SpecialModelEncoder(json.JSONEncoder):
             return obj.serialize()
         if type(obj) in (list, tuple, QuerySet):
             obj = map(lambda item: self.default(item), obj)
+        if type(obj) is dict:
+            new_obj = {}
+            for name, value in obj.items():
+                tmp_obj = new_obj
+                splitted_name = name.split('__')
+                for number, tmp_name in enumerate(splitted_name):
+                    if number == len(splitted_name) - 1:
+                        tmp_obj[tmp_name] = self.default(value)
+                    else:
+                        if type(tmp_obj.get(tmp_name)) is not dict:
+                            tmp_obj[tmp_name] = dict()
+                        tmp_obj = tmp_obj[tmp_name]
+            obj = new_obj
         try:
             return super(SpecialModelEncoder, self).default(obj)
         except TypeError:

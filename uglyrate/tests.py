@@ -38,14 +38,14 @@ class RateTestCase(unittest.TestCase):
             self.assertIsNotNone(Rate.objects.create(
                 user=user,
                 enemy=self.users[num + 5],
-            ), _('Creating not work!'))
+            ), 'Creating not work!')
         for num, user in enumerate(self.users[20:]):
             self.assertRaises(RateAlreadyExist,
                 Rate.objects.create(
                     user=user,
                     enemy=self.users[num + 5],
                 ),
-            _('Dublicates!'))
+            'Dublicates!')
         for num, user in enumerate(self.users[:20]):
             user.ignored = True
             user.save()
@@ -54,7 +54,7 @@ class RateTestCase(unittest.TestCase):
                     user=self.users[num - 1],
                     enemy=user,
                 ),
-            _('Ignoring not work!'))
+            'Ignoring not work!')
 
     def checkCreatingWithFrom(self):
         """Check creating with form"""
@@ -62,18 +62,18 @@ class RateTestCase(unittest.TestCase):
             form = RateForm(user, {'enemy': self.users[num + 5]})
             self.assertIsNotNone(
                 form.is_valid(),
-                _('Creating with form not work!')
+                'Creating with form not work!'
             )
         for num, user in enumerate(self.users[20:]):
             form = RateForm(user, {'enemy': self.users[num + 5]})
             self.assertIs(
                 form.is_valid(),
                 False,
-                _('Form validating not work!')
+                'Form validating not work!'
             )
             self.assertIsNotNone(
                 form.errors,
-                _('Form validating with errors!')
+                'Form validating with errors!'
             )
         for num, user in enumerate(self.users[:20]):
             user.ignored = True
@@ -84,9 +84,9 @@ class RateTestCase(unittest.TestCase):
             self.assertIs(
                 form.is_valid(),
                 False,
-                _('Form validating not work with ignoring!')
+                'Form validating not work with ignoring!'
             )
             self.assertIsNotNone(
                 form.errors,
-                _('Form validating with errors with ignoring!')
+                'Form validating with errors with ignoring!'
             )
