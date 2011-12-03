@@ -20,8 +20,9 @@ from uglynews.models import News
 
 
 class CreateNewsForm(forms.ModelForm):
-
+    """News creating form"""
     def __init__(self, user, *args, **kwargs):
+        """Specif author"""
         self.user = user
         super(CreateNewsForm, self).__init__(*args, **kwargs)
 
