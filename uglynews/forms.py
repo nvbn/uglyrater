@@ -15,17 +15,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-from django.db import models
-from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
-from tagging.fields import TagField
-from datetime import datetime
+from django import forms
+from uglynews.models import News
 
 
-class News(models.Model):
-    """Simple new object"""
-    author = models.ForeignKey(User, verbose_name=_('author'))
-    title = models.CharField(max_length=512, verbose_name=_('title'))
-    text = models.TextField(verbose_name=_('text'))
-    tags = TagField(blank=True, null=True, verbose_name=_('Tags'))
-    created = models.DateTimeField(default=datetime.now(), verbose_name=_('created'))
+class CreateNewsForm(forms.ModelForm):
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(CreateNewsForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        """Clean and add author"""
+        self.instance.author = self.user
+        return self.cleaned_data
+
+    class Meta:
+        model = News
+        fields = ('title', 'text', 'tags')

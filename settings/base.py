@@ -60,7 +60,14 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.sitemaps',
     'django.contrib.sites',
+    'simplepagination',
+    'tagging',
+    'tagging_autocomplete',
+    'treemenus',
+    'compressor',
     'uglyrate',
+    'uglypages',
+    'uglynews',
     'serializator',
 )
 ROOT_URLCONF='urls'

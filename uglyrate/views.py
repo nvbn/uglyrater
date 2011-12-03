@@ -14,14 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
-
-from django.contrib.auth.decorators import login_required
+from annoying.decorators import render_to
+from simplepagination import paginate
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from uglyrate.forms import RateForm
 from serializator.utils import ajax_request
 
 
-@login_required
+@permission_required('add_rate')
 @ajax_request
 def create(request):
     """Create new rate"""
@@ -46,3 +47,10 @@ def get_top(request, offset=0, count=100):
     return User.objects.order_by('-rate_count').values(
         'id', 'rate_count', 'username'
     )[offset:][:count]
+
+
+@render_to('uglyrate/top.html')
+@paginate(style='digg', per_page=50)
+def top(request):
+    """Get top uglys"""
+    return User.objects.filter(ignored=False).order_by('-rate_count')
