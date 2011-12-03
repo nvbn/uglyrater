@@ -17,6 +17,7 @@
 
 from django import forms
 from uglynews.models import News
+from djang0parser.utils import parse
 
 
 class CreateNewsForm(forms.ModelForm):
@@ -25,6 +26,10 @@ class CreateNewsForm(forms.ModelForm):
         """Specif author"""
         self.user = user
         super(CreateNewsForm, self).__init__(*args, **kwargs)
+
+    def clean_text(self):
+        """Sanitize text"""
+        return parse(self.cleaned_data.get('text'))
 
     def clean(self):
         """Clean and add author"""

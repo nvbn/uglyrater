@@ -65,6 +65,7 @@ INSTALLED_APPS = (
     'tagging_autocomplete',
     'treemenus',
     'compressor',
+    'djang0parser',
     'uglyrate',
     'uglypages',
     'uglynews',

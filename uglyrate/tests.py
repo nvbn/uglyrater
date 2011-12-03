@@ -19,10 +19,10 @@ from django.contrib.auth.models import User
 from uglyrate.models import Rate
 from uglyrate.utils import RateAlreadyExist, RatingDisabled
 from uglyrate.forms import RateForm
-import unittest
+from django.test import TestCase
 
 
-class RateTestCase(unittest.TestCase):
+class RateTestCase(TestCase):
     """Test rates"""
 
     def setUp(self):

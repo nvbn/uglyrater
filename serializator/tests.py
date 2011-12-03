@@ -17,7 +17,7 @@
 
 from django.db import models
 from serializator.utils import Serializable, SpecialModelEncoder
-import unittest
+from django.test import TestCase
 
 
 class TestModel(models.Model, Serializable):
@@ -33,7 +33,7 @@ class TestModel2(models.Model, Serializable):
     testfield1 = models.ForeignKey(TestModel)
 
 
-class SerializatorTestCase(unittest.TestCase):
+class SerializatorTestCase(TestCase):
     """Serializator tests"""
 
     def setUp(self):

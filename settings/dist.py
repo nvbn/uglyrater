@@ -24,3 +24,6 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 DEFAULT_FROM = "root@localhost"
+
+VALID_TAGS = 'a strong b i img'
+VALID_ATTRS = 'href src'
