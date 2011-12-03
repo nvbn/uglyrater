@@ -19,12 +19,13 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from uglyrate.models import Rate
-from uglyrate.utils import RatingDisabled, RateAlreadyExist
+from uglyrate.utils import RatingDisabled, RateAlreadyExist,\
+    get_name_from_url, NONE_USER, VK_USER, FB_USER
 
 
 class RateForm(forms.ModelForm):
     """Form for creating rates"""
-    enemy = forms.ModelChoiceField(User, required=True, label=_('user'))
+    enemy = forms.CharField(label=_('user page'))
 
     def __init__(self, user, *args, **kwargs):
         """Init form and set user"""
@@ -34,18 +35,31 @@ class RateForm(forms.ModelForm):
     def clean_enemy(self):
         """Call hash generator"""
         data = self.cleaned_data['enemy']
+        _type, name = get_name_from_url(data)
+        print _type, name
+        if _type is NONE_USER:
+            raise forms.ValidationError(_('This profile does not exist!'))
+        elif _type is VK_USER:
+            user = User.objects.get_or_create(
+                vk_id=name,
+            )
+        elif _type is FB_USER:
+            user = User.objects.get_or_create(
+                fb_id=name,
+            )
         try:
-            self.instance.hash = Rate.gen_hash(self.user, data)
+            self.instance.hash = Rate.gen_hash(self.user, user)
         except RatingDisabled:
             raise forms.ValidationError(_('This user disable ratings!'))
         except RateAlreadyExist:
             raise forms.ValidationError(_('You already rate this user!'))
-        return data
+        return user
 
     def save(self, commit=True):
         result = super(RateForm, self).save(commit)
-        self.user.rate_count += 1
-        self.user.save()
+        user = self.cleaned_data.get('enemt')
+        user.rate_count += 1
+        user.save()
         return result
 
     class Meta:

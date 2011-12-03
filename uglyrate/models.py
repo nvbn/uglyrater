@@ -30,6 +30,14 @@ User.add_to_class(
     'ignored',
     models.BooleanField(default=False, verbose_name=_('rate ignore'))
 )
+User.add_to_class(
+    'vk_id',
+    models.CharField(max_length=512, blank=True, null=True, verbose_name=_('vk short name or id'))
+)
+User.add_to_class(
+    'fb_id',
+    models.CharField(max_length=512, blank=True, null=True, verbose_name=_('fb short name or id'))
+)
 User.serialize = Serializable.serialize
 User.values = Serializable.values
 User.serialize_fields = ['id', 'username']

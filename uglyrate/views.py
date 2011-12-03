@@ -31,7 +31,7 @@ def create(request):
             form.save()
             return {
                 'error': None,
-                'user': form.cleaned_data['enemy'].set_fileds(
+                'user': form.cleaned_data['enemy'].values(
                     'id', 'rate_count', 'username',
                 )
             }

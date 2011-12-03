@@ -15,12 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-import unittest
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
 from uglyrate.models import Rate
 from uglyrate.utils import RateAlreadyExist, RatingDisabled
 from uglyrate.forms import RateForm
+import unittest
 
 
 class RateTestCase(unittest.TestCase):
@@ -59,7 +58,7 @@ class RateTestCase(unittest.TestCase):
     def checkCreatingWithFrom(self):
         """Check creating with form"""
         for num, user in enumerate(self.users[20:]):
-            form = RateForm(user, {'enemy': self.users[num + 5]})
+            form = RateForm(user, {'enemy': 'http:/facebook.com/profile.php?id=%d' % self.users[num + 5]})
             self.assertIsNotNone(
                 form.is_valid(),
                 'Creating with form not work!'
