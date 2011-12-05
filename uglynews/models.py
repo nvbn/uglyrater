@@ -20,12 +20,16 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from tagging.fields import TagField
 from datetime import datetime
+from serializator.utils import Serializable
 
 
-class News(models.Model):
+class News(models.Model, Serializable):
     """Simple new object"""
+    serialize_fields = ['author', 'title', 'id']
     author = models.ForeignKey(User, verbose_name=_('author'))
     title = models.CharField(max_length=512, verbose_name=_('title'))
+    preview = models.TextField(verbose_name=_('preview'))
     text = models.TextField(verbose_name=_('text'))
-    tags = TagField(blank=True, null=True, verbose_name=_('Tags'))
+    tags = TagField(blank=True, null=True, verbose_name=_('tags'))
     created = models.DateTimeField(default=datetime.now(), verbose_name=_('created'))
+    display = models.BooleanField(default=True, verbose_name=_('display'))

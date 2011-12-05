@@ -53,4 +53,6 @@ def get_top(request, offset=0, count=100):
 @paginate(style='digg', per_page=50)
 def top(request):
     """Get top uglys"""
-    return User.objects.filter(ignored=False).order_by('-rate_count')
+    return {
+        'object_list': User.objects.filter(ignored=False).order_by('-rate_count')
+    }

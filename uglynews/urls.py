@@ -14,3 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
+
+from django.conf.urls.defaults import patterns, url
+
+
+urlpatterns = patterns('',
+    url(r'^news/(?P<id>\d*)/$', 'uglynews.views.single_news', name='uglynews_single_news'),
+    url(r'^news/$', 'uglynews.views.news', name='uglynews_news'),
+)

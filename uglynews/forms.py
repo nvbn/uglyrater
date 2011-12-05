@@ -17,19 +17,23 @@
 
 from django import forms
 from uglynews.models import News
-from djang0parser.utils import parse
+from djang0parser.utils import parse, cut, unparse
+from tagging.forms import TagField
 
 
 class CreateNewsForm(forms.ModelForm):
     """News creating form"""
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user=None, *args, **kwargs):
         """Specif author"""
         self.user = user
         super(CreateNewsForm, self).__init__(*args, **kwargs)
 
     def clean_text(self):
         """Sanitize text"""
-        return parse(self.cleaned_data.get('text'))
+        text = parse(self.cleaned_data.get('text'))
+        preview, text = cut(text)
+        self.instance.preview = preview
+        return text
 
     def clean(self):
         """Clean and add author"""
@@ -39,3 +43,48 @@ class CreateNewsForm(forms.ModelForm):
     class Meta:
         model = News
         fields = ('title', 'text', 'tags')
+
+
+class EditNewsForm(forms.Form):
+    """Edit news post"""
+    title = forms.CharField()
+    text = forms.CharField(widget=forms.TextInput)
+    tags = TagField(required=False)
+
+    def __init__(self, news=None, *args, **kwargs):
+        """Make shit like special model form"""
+        self.news = news
+        self.initial = {
+            'title': news.title,
+            'text': unparse(news.text),
+            'tags': news.tags,
+        }
+        super(EditNewsForm, self).__init__(*args, **kwargs)
+
+    def clean_text(self):
+        """Sanitize and cut text"""
+        text = parse(self.cleaned_data.get('text'))
+        preview, text = cut(text)
+        self.news.preview = preview
+        self.news.text = text
+        return text
+
+    def clean(self):
+        """Yeah, shit"""
+        data = self.cleaned_data
+        self.news.tags = data.get('tags')
+        self.news.title = data.get('title')
+        return data
+
+    def save(self):
+        """Update model data"""
+        data = self.cleaned_data
+        self.news.title = data.get('title')
+        self.news.preview, self.news.text = cut(
+            parse(
+                data.get('text')
+            )
+        )
+        self.news.tags = data.get('tags')
+        self.news.save()
+        return self.news
