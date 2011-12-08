@@ -21,9 +21,10 @@ from django.contrib.auth.models import User
 from tagging.fields import TagField
 from datetime import datetime
 from serializator.utils import Serializable
+from uglycomments.models import ModelWithComments
 
 
-class News(models.Model, Serializable):
+class News(ModelWithComments, Serializable):
     """Simple new object"""
     serialize_fields = ['author', 'title', 'id']
     author = models.ForeignKey(User, verbose_name=_('author'))
