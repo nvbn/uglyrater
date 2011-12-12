@@ -14,11 +14,35 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
-
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import get_object_or_404
 from serializator.utils import ajax_request
+from uglycomments.forms import CommentForm
+from uglycomments.models import Comment
 
 
+@permission_required('add_comment')
 @ajax_request
 def reply(request, root_id):
-    pass
+    """Reply to obj or comment"""
+    root = get_object_or_404(Comment, id=root_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = root.reply({
+                'text': form.cleaned_data['text'],
+                'author': request.user,
+            })
+            return {
+                'status': True,
+                'comment': comment
+            }
+        else:
+            return {
+                'status': False,
+                'errors': form.errors,
+            }
+    return {
+        'status': False
+    }
   

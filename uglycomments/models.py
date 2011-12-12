@@ -35,6 +35,11 @@ class Comment(MP_Node, Serializable):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
+    def reply(self, **kwargs):
+        """Reply to comment"""
+        kwargs['content_object'] = self.content_object
+        return self.add_child(**kwargs)
+
 
 class ModelWithComments(models.Model):
     """Abstract model with comments class"""
@@ -56,7 +61,7 @@ class ModelWithComments(models.Model):
             root = Comment.objects.get(id=comment_id)
         else:
             root = self.root
-        return root.add_child(**kwargs)
+        return root.reply(**kwargs)
 
     class Meta:
         abstract = True

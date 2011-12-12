@@ -14,15 +14,3 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
-
-from django.conf.urls.defaults import patterns, include
-from django.contrib import admin
-admin.autodiscover()
-
-urlpatterns = patterns('',
-    (r'^rate/', include('uglyrate.urls')),
-    (r'^news/', include('uglynews.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^loginza/', include('loginza.urls')),
-    (r'^', include('uglypages.urls')),
-)

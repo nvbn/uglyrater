@@ -14,15 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
+from django import template
+from uglycomments.models import Comment
+register = template.Library()
 
-from django.conf.urls.defaults import patterns, include
-from django.contrib import admin
-admin.autodiscover()
 
-urlpatterns = patterns('',
-    (r'^rate/', include('uglyrate.urls')),
-    (r'^news/', include('uglynews.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^loginza/', include('loginza.urls')),
-    (r'^', include('uglypages.urls')),
-)
+@register.inclusion_tag('uglycomments/comment_tree.html')
+def comment_tree(obj):
+    """Get comment tree"""
+    root = Comment.objects.get(content_object=obj, depth=0)
+    return {
+        'comments': root.get_tree(),
+    }

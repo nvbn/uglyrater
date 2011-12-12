@@ -74,3 +74,7 @@ INSTALLED_APPS = (
 ROOT_URLCONF='urls'
 SITE_ID = 1
 SITE_URL = 'http://localhost:8000'
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'loginza.authentication.LoginzaBackend',
+)

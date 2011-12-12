@@ -14,15 +14,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
+from django import forms
+from djang0parser.utils import parse
 
-from django.conf.urls.defaults import patterns, include
-from django.contrib import admin
-admin.autodiscover()
 
-urlpatterns = patterns('',
-    (r'^rate/', include('uglyrate.urls')),
-    (r'^news/', include('uglynews.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^loginza/', include('loginza.urls')),
-    (r'^', include('uglypages.urls')),
-)
+class CommentForm(forms.Form):
+    """Comment creating form"""
+    text = forms.CharField(required=True)
+
+    def clean_text(self):
+        """Parse text"""
+        text = self.cleaned_data.get('text')
+        return parse(text)
