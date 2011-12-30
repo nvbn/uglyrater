@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+uglyweb/__init__.py
+uglyweb.egg-info/PKG-INFO
+uglyweb.egg-info/SOURCES.txt
+uglyweb.egg-info/dependency_links.txt
+uglyweb.egg-info/entry_points.txt
+uglyweb.egg-info/not-zip-safe
+uglyweb.egg-info/top_level.txt

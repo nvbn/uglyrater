@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+vk_fetcher/__init__.py
+vk_fetcher.egg-info/PKG-INFO
+vk_fetcher.egg-info/SOURCES.txt
+vk_fetcher.egg-info/dependency_links.txt
+vk_fetcher.egg-info/entry_points.txt
+vk_fetcher.egg-info/not-zip-safe
+vk_fetcher.egg-info/top_level.txt
