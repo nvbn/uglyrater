@@ -1,9 +1,0 @@
-{% extends base.html %}
-
-{% block content %}
-    <ol>
-    {% for user in objects_list %}
-        <li>{{ user.fb_id }} {{ user.vk_id }} &mdash; {{ user.rate_count }}</li>
-    {% endfor %}
-    </ol>
-{% endblock %}
