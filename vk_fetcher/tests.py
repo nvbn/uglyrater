@@ -62,26 +62,21 @@ class FetcherTestCase(unittest.TestCase):
 
     def testNetworkFetch(self):
         """Test fetching profle by url via pika"""
-        special = hash('http://vk.com/fffffffffffffuuuuuuuuuuuuuuuuuuu/')
         self.channel.basic_publish(
             exchange='',
             routing_key=self.pika_queue,
             body=json.dumps({
                 'url': 'http://vk.com/fffffffffffffuuuuuuuuuuuuuuuuuuu/',
-                'special': special,
             }),
         )
         time.sleep(2)
         profile = self.db.profiles.find_one({
-            'special': special
+            '$or': [
+                {'screen_name': "fffffffffffffuuuuuuuuuuuuuuuuuuu"},
+                {'uid': "fffffffffffffuuuuuuuuuuuuuuuuuuu"}
+            ]
         })
         profile.pop('_id')
-        profile.pop('special')
-        self.db.profiles.update({
-            'special': special
-        }, {
-            '$set': {'special': None},
-        })
         self.assertEqual(profile,
             fetch.get_profile("fffffffffffffuuuuuuuuuuuuuuuuuuu"),
             'fetch from network not work'

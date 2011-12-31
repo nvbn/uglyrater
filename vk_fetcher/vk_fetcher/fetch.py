@@ -21,7 +21,7 @@ def get_profile(name):
     """Get profile from VK api"""
     try:
         return vk.getProfiles(uids=name,
-            fields='uid, first_name, last_name, photo'
+            fields='uid, first_name, last_name, photo, screen_name'
         )[0]
     except IndexError:
         raise ProfileNotFound(name)

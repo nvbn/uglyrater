@@ -6,6 +6,7 @@ from uglyweb import settings
 from pymongo import Connection
 import fetch
 import pika
+from logging import log
 
 
 class Fetcher(object):
@@ -33,17 +34,22 @@ class Fetcher(object):
     def worker(self, ch, method, properties, body):
         """Pika callback"""
         data = json.loads(body)
-        if 'url' in data:
-            try:
-                name = fetch.get_name_from_url(data['url'])
+        try:
+            name = data['name'] if data.get('name') else fetch.get_name_from_url(data['url'])
+            if not self.db.profiles.find({
+                '$or': [
+                    {'uid': name},
+                    {'screen_name': name}
+                ]
+            }).count():
                 profile = fetch.get_profile(name)
-                profile['special'] = data.get('special', None)
                 self.db.profiles.insert(profile)
-            except fetch.ProfileNotFound:
-                pass
-        ch.basic_ack(
-            delivery_tag=method.delivery_tag
-        )
+        except (fetch.ProfileNotFound, KeyError), e:
+            log(0, e)
+        finally:
+            ch.basic_ack(
+                delivery_tag=method.delivery_tag
+            )
 
 
 def main():
