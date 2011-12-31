@@ -1,6 +1,8 @@
+from glob import glob
 from pika.adapters.tornado_connection import TornadoConnection
 import pika
 import tornado
+import os
 
 
 class PikaClient(object):
@@ -47,3 +49,11 @@ class PikaClient(object):
             routing_key=self.queue,
             body=body,
         )
+
+
+def coffee2js(coffee_path, js_path):
+    for name in glob(os.path.join(coffee_path, '*.coffee')):
+        os.system('coffee %s -o %s' % (
+            os.path.join(coffee_path, name),
+            js_path,
+        ))

@@ -8,7 +8,7 @@ import tornado.web
 import tornadio2
 from uglyweb import settings
 from uglyweb.base import BaseConnection
-from uglyweb.utils import PikaClient
+from uglyweb.utils import PikaClient, coffee2js
 
 
 if __name__ == '__main__':
@@ -23,6 +23,7 @@ if __name__ == '__main__':
         db_port=getattr(settings, 'DB_PORT', 27017),
         db_name=getattr(settings, 'DB_NAME', 'uglyweb'),
     )
+    coffee2js('media/coffee/', 'media/js/')
     pc = PikaClient(
         getattr(settings, 'PIKA_HOST', 'localhost'),
         getattr(settings, 'PIKA_QUEUE', 'uglyweb'),

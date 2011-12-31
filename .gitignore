@@ -3,4 +3,5 @@ syntax: glob
 *.pyc
 *pip-delete-this-directory.txt
 uglyweb/uglyweb/settings/local.py
+uglyweb/media/js/*
 .idea
