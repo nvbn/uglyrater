@@ -19,7 +19,8 @@ setup(name='uglyweb',
       install_requires=[
           'pymongo',
           'pika',
-          'tornado'
+          'tornado',
+          'asyncmongo',
       ],
       entry_points="""
       # -*- Entry points: -*-
