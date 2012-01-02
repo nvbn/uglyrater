@@ -65,17 +65,3 @@ def haml2html(haml_path, html_path):
 def sass2css(sass_path, css_path):
     for name in glob(os.path.join(sass_path, '*.sass')):
         os.system('sass %s %s ' % (name, name.replace(sass_path, css_path).replace('.sass', '.css')))
-
-class Dict2Obj(object):
-    def __init__(self, entries):
-        self.__dict__.update(entries)
-
-
-class StaticHandler(tornado.web.RequestHandler):
-    pass
-
-    @classmethod
-    def create(cls, static):
-        return '/' + static, type('StaticHandler', (cls,), {
-            'static': static,
-        })

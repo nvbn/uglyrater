@@ -3,6 +3,11 @@
     %head
         %title Uglyrater!
         %link{:rel => "stylesheet", :href => "media/css/base.css", :type => "text/css"}
+        %link{:rel => "stylesheet", :href => "media/css/jquery.gritter.css", :type => "text/css"}
+        %script{:type => "text/javascript",
+            :src => "http://vkontakte.ru/js/api/openapi.js"}
+        %script{:type => "text/javascript"}
+            VK.init({apiId: {{VK_ID}}});
         %script{:type => "text/javascript",
             :src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"}
         %script{:type => "text/javascript",
@@ -10,17 +15,28 @@
         %script{:type => "text/javascript",
             :src => "/media/js/jquery.tmpl.min.js"}
         %script{:type => "text/javascript",
+            :src => "/media/js/jquery.cookie.js"}
+        %script{:type => "text/javascript",
+            :src => "/media/js/jquery.gritter.min.js"}
+        %script{:type => "text/javascript",
             :src => "/media/js/main.js"}
-        %script{:type => "text/x-jquery-tmpl", :id => "profile_tpl"}
+        %script#profile_tpl{:type => "text/x-jquery-tmpl"}
             %li{:id => "${profile.uid}"}
                 %img{:class => 'av', :src => '${profile.photo}'}
                 ${profile.first_name} ${profile.last_name}
                 %a{:href => "#", :class => '${plus_cls}'} +
                 ${profile.rate}
                 %a{:href => "#", :class => '${minus_cls}'} -
+        %script#logout_tpl{:type => "text/x-jquery-tmpl"}
+            %img{:src => '${base.photo}'}
+            ${base.first_name} ${base.last_name}
+            %a{:href => '/logout/'} logout
+        %script#login_tpl{:type => "text/x-jquery-tmpl"}
+            %a{:href => '/login/'} login
     %body
         %h1 Uglyrater!
-        %input{:type => "text", :id => 'url', :placeholder => 'write url'}
-        %button{:type => "button", :id => 'add'} Add
-        %ol{:id => 'list'}
+        #login_panel
+        %input#url{:type => "text", :placeholder => 'write url'}
+        %button#add{:type => "button"} Add
+        %ol#list
             %li Loading!

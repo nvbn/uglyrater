@@ -1,7 +1,37 @@
 class Base
     authorised = false
+    uid = 0
 
-base = new Base
+    check_auth: ->
+        if @authorised
+            return true
+        else
+            $.gritter.add {
+            	title: 'Error!',
+            	text: 'Authintication requested!'
+            }
+            return false
+
+    template_name: ->
+        if @authorised
+            return '#logout_tpl'
+        else
+            return '#login_tpl'
+
+    fill: (data) ->
+        data = data['response'][0]
+        @first_name = data.first_name
+        @last_name = data.last_name
+        @photo = data.photo
+        @render()
+
+    render: ->
+        @obj = $(@template_name()).tmpl({
+            base: this
+        })
+        $('#login_panel').html @obj
+
+base = new Base()
 conn = io.connect('http://localhost')
 
 class RatesObj
@@ -25,26 +55,26 @@ class Profile
         @uid = profile.uid
         @template_name = '#profile_tpl'
 
-
     render: ->
         minus_cls = 'rate rate_minus'
         plus_cls = 'rate rate_plus'
-        if @value
+        if @value == 2
             plus_cls = plus_cls + ' active'
-        else
+        else if @value == 1
             minus_cls = minus_cls + ' active'
-        result_obj = $(@template_name).tmpl {
+        @obj = $(@template_name).tmpl {
             profile: this,
             minus_cls: minus_cls,
             plus_cls: plus_cls
         }
-        result_obj.find('a').click (event) ->
+        @obj.find('a').click (event) ->
             event.preventDefault()
-            conn.emit 'set_rate', $(this).parent().attr('id'), $(this).hasClass 'rate_plus'
-        result_obj
+            if base.check_auth()
+                conn.emit 'set_rate', $(this).parent().attr('id'), $(this).hasClass 'rate_plus'
+        @obj
 
     get: ->
-         $('#' + uid)
+        $('#' + @uid)
 
 
 class TopObj
@@ -53,20 +83,32 @@ class TopObj
         @profiles = (new Profile profile, @rates_obj.get(profile.uid) for profile in profiles)
 
     render: (to) ->
+        @output = $(to)
         $(to).empty()
         for profile in @profiles
             $(to).append profile.render()
 
 
 conn.on 'connect', () ->
-    conn.emit 'is_authorised', (status) ->
-        base.authorised = status
+    conn.emit 'authorise', $.cookie('uid'), $.cookie('secret')
     $('#add').click (event) ->
         event.preventDefault()
-        conn.emit 'add', $('#url').val()
+        if base.check_auth()
+            conn.emit 'add', $('#url').val()
 
+conn.on 'authorise_result', (status) ->
+    console.log status
+    base.authorised = status
+    base.uid = $.cookie('uid')
+    if base.uid
+        VK.Api.call 'getProfiles', {
+            uids: base.uid,
+            fields: 'first_name, last_name, photo'
+        }, (data) ->
+            base.fill data
+    else
+        base.render()
 
 conn.on 'update', (profiles, rates) ->
-    top_object = new TopObj(profiles, rates)
+    top_object = new TopObj profiles, rates
     top_object.render '#list'
-
