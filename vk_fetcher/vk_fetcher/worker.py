@@ -12,7 +12,7 @@ from logging import log
 class Fetcher(object):
     """Special fetcher"""
 
-    def __init__(self, db_host, db_port, db_name, pika_host, pika_queue):
+    def __init__(self, db_host, db_port, db_name, pika_host, pika_queue, finished_queue):
         """Init pymongo and pika"""
         self.connection = Connection(db_host, db_port)
         self.db = self.connection[db_name]
@@ -26,6 +26,7 @@ class Fetcher(object):
         )
         self.channel.basic_qos(prefetch_count=1)
         self.channel.basic_consume(self.worker, queue=pika_queue)
+        self.finished_queue = finished_queue
 
     def run(self):
         """Start worker"""
@@ -33,8 +34,8 @@ class Fetcher(object):
 
     def worker(self, ch, method, properties, body):
         """Pika callback"""
-        data = json.loads(body)
         try:
+            data = json.loads(body)
             name = data['name'] if data.get('name') else fetch.get_name_from_url(data['url'])
             if not self.db.profiles.find({
                 '$or': [
@@ -43,8 +44,9 @@ class Fetcher(object):
                 ]
             }).count():
                 profile = fetch.get_profile(name)
+                profile['rate'] = 0
                 self.db.profiles.insert(profile)
-        except (fetch.ProfileNotFound, KeyError), e:
+        except (fetch.ProfileNotFound, KeyError, ValueError), e:
             log(0, e)
         finally:
             ch.basic_ack(
@@ -59,6 +61,7 @@ def main():
         db_name=getattr(settings, 'DB_NAME', 'uglyweb'),
         pika_host=getattr(settings, 'PIKA_HOST', 'localhost'),
         pika_queue=getattr(settings, 'PIKA_QUEUE', 'uglyweb'),
+        finished_queue=getattr(settings, 'FINISHED_QUEUE', 'finished')
     )
     fetcher.run()
 

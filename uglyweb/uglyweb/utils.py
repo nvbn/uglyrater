@@ -1,4 +1,6 @@
+from functools import wraps
 from glob import glob
+import json
 from pika.adapters.tornado_connection import TornadoConnection
 import pika
 import tornado
@@ -14,6 +16,7 @@ class PikaClient(object):
         self.connecting = False
         self.connection = None
         self.channel = None
+        self.callbacks = {}
 
     def connect(self):
         if self.connecting:
@@ -47,13 +50,25 @@ class PikaClient(object):
         self.channel.basic_publish(
             exchange='',
             routing_key=self.queue,
-            body=body,
+            body=json.dumps(body),
         )
 
 
 def coffee2js(coffee_path, js_path):
     for name in glob(os.path.join(coffee_path, '*.coffee')):
-        os.system('coffee %s -o %s' % (
-            os.path.join(coffee_path, name),
-            js_path,
-        ))
+        os.system('coffee -c -o %s %s ' % (js_path, name))
+
+class Dict2Obj(object):
+    def __init__(self, entries):
+        self.__dict__.update(entries)
+
+
+class StaticHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(open(self.static).read())
+
+    @classmethod
+    def create(cls, static):
+        return '/' + static, type('StaticHandler', (cls,), {
+            'static': static,
+        })
