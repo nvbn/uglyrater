@@ -58,14 +58,21 @@ def coffee2js(coffee_path, js_path):
     for name in glob(os.path.join(coffee_path, '*.coffee')):
         os.system('coffee -c -o %s %s ' % (js_path, name))
 
+def haml2html(haml_path, html_path):
+    for name in glob(os.path.join(haml_path, '*.haml')):
+        os.system('haml %s %s ' % (name, name.replace(haml_path, html_path).replace('.haml', '.html')))
+
+def sass2css(sass_path, css_path):
+    for name in glob(os.path.join(sass_path, '*.sass')):
+        os.system('sass %s %s ' % (name, name.replace(sass_path, css_path).replace('.sass', '.css')))
+
 class Dict2Obj(object):
     def __init__(self, entries):
         self.__dict__.update(entries)
 
 
 class StaticHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write(open(self.static).read())
+    pass
 
     @classmethod
     def create(cls, static):

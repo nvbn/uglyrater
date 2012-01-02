@@ -1,0 +1,26 @@
+!!! 5
+%html
+    %head
+        %title Uglyrater!
+        %link{:rel => "stylesheet", :href => "media/css/base.css", :type => "text/css"}
+        %script{:type => "text/javascript",
+            :src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"}
+        %script{:type => "text/javascript",
+            :src => "/media/js/socket.io.js"}
+        %script{:type => "text/javascript",
+            :src => "/media/js/jquery.tmpl.min.js"}
+        %script{:type => "text/javascript",
+            :src => "/media/js/main.js"}
+        %script{:type => "text/x-jquery-tmpl", :id => "profile_tpl"}
+            %li{:id => "${profile.uid}"}
+                %img{:class => 'av', :src => '${profile.photo}'}
+                ${profile.first_name} ${profile.last_name}
+                %a{:href => "#", :class => '${plus_cls}'} +
+                ${profile.rate}
+                %a{:href => "#", :class => '${minus_cls}'} -
+    %body
+        %h1 Uglyrater!
+        %input{:type => "text", :id => 'url', :placeholder => 'write url'}
+        %button{:type => "button", :id => 'add'} Add
+        %ol{:id => 'list'}
+            %li Loading!
