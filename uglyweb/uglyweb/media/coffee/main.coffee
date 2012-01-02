@@ -32,7 +32,7 @@ class Base
         $('#login_panel').html @obj
 
 base = new Base()
-conn = io.connect('http://localhost')
+conn = io.connect('http://uglyrater.org')
 
 class RatesObj
     constructor: (rates) ->
