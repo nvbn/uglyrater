@@ -7,13 +7,12 @@ class BaseConnection(tornadio2.SocketConnection):
 
     def __init__(self, *args, **kwargs):
         super(BaseConnection, self).__init__(*args, **kwargs)
-        self.timer = tornado.ioloop.PeriodicCallback(self.update, 500)
-        self.timer.start()
-        self._cached_result = None
         self.uid = None
+        self.timer = None
 
     def on_close(self):
-        self.timer.stop()
+        if self.timer:
+            self.timer.stop()
 
     @property
     def db(self):
@@ -32,29 +31,34 @@ class BaseConnection(tornadio2.SocketConnection):
             self.db.profiles.find,
             limit=100, sort=[('rate', -1)]
         )
-        if profiles != self._cached_result:
-            if self.uid:
-                uids = map(lambda profile: profile['uid'], profiles)
-                (rates,), error = yield tornado.gen.Task(
-                    self.db.rates.find,{
-                        'who': self.uid,
-                        'uid': {'$in': uids},
+        if self.uid:
+            uids = map(lambda profile: profile['uid'], profiles)
+            (rates,), error = yield tornado.gen.Task(
+                self.db.rates.find, {
+                    'who': self.uid,
+                    'uid': {'$in': uids},
                     }
-                )
-                rates = map(lambda rate: {
-                    'uid': rate['uid'],
-                    'value': int(rate['value']) + 1,
+            )
+            rates = map(lambda rate: {
+                'uid': rate['uid'],
+                'value': int(rate['value']) + 1,
                 }, rates)
-            else:
-                rates = []
-            self._cached_result = profiles
-            self.emit('update', map(lambda profile: {
-                'first_name': profile['first_name'],
-                'last_name': profile['last_name'],
-                'photo': profile['photo'],
-                'uid': profile['uid'],
-                'rate': profile.get('rate', 0)
-            }, profiles), rates)
+        else:
+            rates = []
+        self.emit('update', map(lambda profile: {
+            'first_name': profile['first_name'],
+            'last_name': profile['last_name'],
+            'photo': profile['photo'],
+            'uid': profile['uid'],
+            'rate': profile.get('rate', 0)
+        }, profiles), rates)
+
+
+    @tornadio2.event('subscribe')
+    def subscribe(self):
+        if not self.timer:
+            self.timer = tornado.ioloop.PeriodicCallback(self.update, 1000)
+            self.timer.start()
 
     @tornadio2.event('authorise')
     @tornado.gen.engine
@@ -66,6 +70,7 @@ class BaseConnection(tornadio2.SocketConnection):
                 'secret': secret
             })
         self.emit('authorise_result', bool(user))
+        self.update()
         if user:
             self.uid = int(uid)
 
@@ -108,6 +113,7 @@ class BaseConnection(tornadio2.SocketConnection):
                 }, {
                     '$inc': {'rate': num if val else -num}
                 })
+        self.update()
 
 
     @tornadio2.event('add')
@@ -116,6 +122,7 @@ class BaseConnection(tornadio2.SocketConnection):
             self.pc.send({
                 'url': url
             })
+            self.update()
 
 
 

@@ -1,7 +1,7 @@
 !!! 5
 %html
     %head
-        %title Uglyrater!
+        %title Uglyrater, новый рейтинг!
         %link{:rel => "stylesheet", :href => "media/css/base.css", :type => "text/css"}
         %link{:rel => "stylesheet", :href => "media/css/jquery.gritter.css", :type => "text/css"}
         %script{:type => "text/javascript",
@@ -22,21 +22,34 @@
             :src => "/media/js/main.js"}
         %script#profile_tpl{:type => "text/x-jquery-tmpl"}
             %li{:id => "${profile.uid}"}
-                %img{:class => 'av', :src => '${profile.photo}'}
-                ${profile.first_name} ${profile.last_name}
-                %a{:href => "#", :class => '${plus_cls}'} +
-                ${profile.rate}
-                %a{:href => "#", :class => '${minus_cls}'} -
+                %div{:class => 'list_elem'}
+                    %img{:class => 'av', :src => '${profile.photo}'}
+                    ${profile.first_name} ${profile.last_name}
+                    %a{:href => "#", :class => '${plus_cls}'} +
+                    ${profile.rate}
+                    %a{:href => "#", :class => '${minus_cls}'} -
         %script#logout_tpl{:type => "text/x-jquery-tmpl"}
-            %img{:src => '${base.photo}'}
-            ${base.first_name} ${base.last_name}
-            %a{:href => '/logout/'} logout
+            %div#user_data
+                %img{:class => 'av', :src => '${base.photo}'}
+                ${base.first_name} ${base.last_name}
+                %a{:href => '/logout/'} Выход
         %script#login_tpl{:type => "text/x-jquery-tmpl"}
-            %a{:href => '/login/'} login
+            %a{:href => '/login/'} Авторизация
     %body
-        %h1 Uglyrater!
-        #login_panel
-        %input#url{:type => "text", :placeholder => 'write url'}
-        %button#add{:type => "button"} Add
-        %ol#list
-            %li Loading!
+        #page
+            #top
+                %h1 Uglyrater!
+                #login_panel
+            #main
+                %label{:for => 'url'}
+                    Введите адрес страницы пользователя:
+                %br
+                %br
+                %input#url{:type => "text", :placeholder => 'http://vk.com/.....'}
+                %button#add{:type => "button"} Добавить!
+                %ol#list
+            #loader
+                %p Подождите, идёт загрузка.
+                %img{:src => 'media/images/ajax-loader.gif'}
+
+

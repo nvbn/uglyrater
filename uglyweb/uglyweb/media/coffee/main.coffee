@@ -7,8 +7,8 @@ class Base
             return true
         else
             $.gritter.add {
-            	title: 'Error!',
-            	text: 'Authintication requested!'
+            	title: 'Нененене!',
+            	text: 'Это действие требует авторизации!'
             }
             return false
 
@@ -70,7 +70,7 @@ class Profile
         @obj.find('a').click (event) ->
             event.preventDefault()
             if base.check_auth()
-                conn.emit 'set_rate', $(this).parent().attr('id'), $(this).hasClass 'rate_plus'
+                conn.emit 'set_rate', $(this).parent().parent().attr('id'), $(this).hasClass 'rate_plus'
         @obj
 
     get: ->
@@ -90,14 +90,18 @@ class TopObj
 
 
 conn.on 'connect', () ->
+    $('#loader').css 'display', 'none'
+    $('#main').css 'display', 'block'
+    conn.emit 'subscribe'
     conn.emit 'authorise', $.cookie('uid'), $.cookie('secret')
     $('#add').click (event) ->
         event.preventDefault()
         if base.check_auth()
             conn.emit 'add', $('#url').val()
+            $('#url').val ''
+            $('#url').attr 'placeholder', 'Готово!'
 
 conn.on 'authorise_result', (status) ->
-    console.log status
     base.authorised = status
     base.uid = $.cookie('uid')
     if base.uid
