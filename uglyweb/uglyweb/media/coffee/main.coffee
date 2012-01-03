@@ -78,9 +78,16 @@ class Profile
 
 
 class TopObj
-    constructor: (profiles, rates) ->
-        @rates_obj = new RatesObj rates
-        @profiles = (new Profile profile, @rates_obj.get(profile.uid) for profile in profiles)
+    cached_profiles = null
+    cached_rates = null
+
+    update: (profiles, rates) ->
+        if profiles != @cached_profiles and rates != @cached_rates
+            @rates_obj = new RatesObj rates
+            @profiles = (new Profile profile, @rates_obj.get(profile.uid) for profile in profiles)
+            @cached_profiles = profiles
+            @cached_rates = rates
+            @render '#list'
 
     render: (to) ->
         @output = $(to)
@@ -88,6 +95,7 @@ class TopObj
         for profile in @profiles
             $(to).append profile.render()
 
+top_obj = new TopObj()
 
 conn.on 'connect', () ->
     $('#loader').css 'display', 'none'
@@ -114,5 +122,4 @@ conn.on 'authorise_result', (status) ->
         base.render()
 
 conn.on 'update', (profiles, rates) ->
-    top_object = new TopObj profiles, rates
-    top_object.render '#list'
+    top_obj.update profiles, rates
