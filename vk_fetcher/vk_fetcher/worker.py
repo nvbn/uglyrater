@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import json
 import sys
+from vkontakte.api import VKError
+
 sys.path.append('../../uglyweb/')
 from uglyweb import settings
 from pymongo import Connection
@@ -46,7 +48,7 @@ class Fetcher(object):
                 profile = fetch.get_profile(name)
                 profile['rate'] = 0
                 self.db.profiles.insert(profile)
-        except (fetch.ProfileNotFound, KeyError, ValueError), e:
+        except (fetch.ProfileNotFound, KeyError, ValueError, VKError), e:
             log(0, e)
         finally:
             ch.basic_ack(
