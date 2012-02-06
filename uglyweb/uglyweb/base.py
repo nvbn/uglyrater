@@ -37,12 +37,12 @@ class BaseConnection(tornadio2.SocketConnection):
                 self.db.rates.find, {
                     'who': self.uid,
                     'uid': {'$in': uids},
-                    }
+                }
             )
             rates = map(lambda rate: {
                 'uid': rate['uid'],
                 'value': int(rate['value']) + 1,
-                }, rates)
+            }, rates)
         else:
             rates = []
         self.emit('update', map(lambda profile: {
@@ -50,7 +50,7 @@ class BaseConnection(tornadio2.SocketConnection):
             'last_name': profile['last_name'],
             'photo': profile['photo'],
             'uid': profile['uid'],
-            'rate': profile.get('rate', 0)
+            'rate': profile.get('rate', 0),
         }, profiles), rates)
 
 
@@ -114,7 +114,6 @@ class BaseConnection(tornadio2.SocketConnection):
                     '$inc': {'rate': num if val else -num}
                 })
         self.update()
-
 
     @tornadio2.event('add')
     def add(self, url):

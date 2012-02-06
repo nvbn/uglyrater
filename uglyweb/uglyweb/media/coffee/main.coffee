@@ -55,7 +55,7 @@ class Profile
         @uid = profile.uid
         @template_name = '#profile_tpl'
 
-    render: ->
+    render: (num) ->
         minus_cls = 'rate rate_minus'
         plus_cls = 'rate rate_plus'
         if @value == 2
@@ -71,6 +71,7 @@ class Profile
             event.preventDefault()
             if base.check_auth()
                 conn.emit 'set_rate', $(this).parent().parent().attr('id'), $(this).hasClass 'rate_plus'
+        @obj.attr 'rel',  num
         @obj
 
     get: ->
@@ -78,12 +79,14 @@ class Profile
 
 
 class TopObj
-    cached_profiles = null
-    cached_rates = null
+    cached_profiles: null
+    cached_rates: null
+    old_profiles: null
 
     update: (profiles, rates) ->
         if profiles != @cached_profiles and rates != @cached_rates
             @rates_obj = new RatesObj rates
+            @old_profiled = @profiles
             @profiles = (new Profile profile, @rates_obj.get(profile.uid) for profile in profiles)
             @cached_profiles = profiles
             @cached_rates = rates
@@ -92,8 +95,14 @@ class TopObj
     render: (to) ->
         @output = $(to)
         $(to).empty()
+        num = 0
         for profile in @profiles
-            $(to).append profile.render()
+            if not @old_profiles[num] or @old_profiles[num].uid != profile.uid or @old_profiles[num].rate != profile.rate or @old_profiles[num].value != profile.value
+                if $('li[rel=' + num + ']')
+                    $('li[rel=' + num + ']').replaceWith profile.render(num)
+                else
+                    $(to).append profile.render(num)
+            num += 1
 
 top_obj = new TopObj()
 
