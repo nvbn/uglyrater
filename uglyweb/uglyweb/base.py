@@ -10,8 +10,9 @@ class BaseConnection(tornadio2.SocketConnection):
         super(BaseConnection, self).__init__(*args, **kwargs)
         self.uid = None
         self.timer = None
-        self.skip = 50
+        self.skip = 0
         self.filter = ''
+        self.limit = 500
 
     def on_close(self):
         if self.timer:
@@ -39,7 +40,7 @@ class BaseConnection(tornadio2.SocketConnection):
             spec=None
         (profiles,), error = yield tornado.gen.Task(
             self.db.profiles.find, spec=spec, skip=self.skip,
-            limit=100, sort=[('rate', -1)]
+            limit=self.limit, sort=[('rate', -1)]
         )
         if self.uid:
             uids = map(lambda profile: profile['uid'], profiles)
@@ -79,8 +80,8 @@ class BaseConnection(tornadio2.SocketConnection):
     @tornadio2.event('set_limits')
     def set_limits(self, skip, limit):
         self.skip = skip
-        if limit > 100:
-            limit = 100
+        if limit > 500:
+            limit = 500
         self.limit = limit
 
     @tornadio2.event('authorise')
