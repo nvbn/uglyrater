@@ -9,15 +9,30 @@ import tornado.ioloop
 import tornado.web
 import tornado.gen
 import tornadio2
+from tornadotools.route import Route
 from uglyweb import settings
 from uglyweb.base import BaseConnection, BaseHandler
 from uglyweb.utils import PikaClient, coffee2js, haml2html, sass2css
 from uglyweb.vk_mixin import VKMixin
 
 
+@Route(r'/')
 class IndexHandler(BaseHandler):
     def get(self):
         self.render('templates/index.html', VK_ID=self.settings['client_id'])
+
+
+@Route(r'/ext/')
+class ExtHandler(BaseHandler):
+    def get(self):
+        self.render('templates/ext.html', VK_ID=self.settings['client_id'])
+
+
+@Route(r'/about/')
+class AboutHandler(BaseHandler):
+    def get(self):
+        self.render('templates/about.html', VK_ID=self.settings['client_id'])
+
 
 class VKHandler(BaseHandler, VKMixin):
     @tornado.web.asynchronous
@@ -72,13 +87,7 @@ if __name__ == '__main__':
     haml2html('haml/', 'templates/')
     sass2css('media/sass/', 'media/css/')
     application = tornado.web.Application(
-        router.apply_routes(
-            [
-                (r"/", IndexHandler),
-                (r'/login/', VKHandler),
-                (r'/logout/', LogoutHandler),
-            ]
-        ),
+        router.apply_routes(Route.routes()),
         debug=getattr(settings, 'DEBUG', True),
         socket_io_port=getattr(settings, 'PORT', 8080),
         flash_policy_port=843,

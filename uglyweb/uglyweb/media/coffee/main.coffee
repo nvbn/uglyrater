@@ -29,7 +29,7 @@ class Base
         @obj = $(@template_name()).tmpl({
             base: this
         })
-        $('#login_panel').html @obj
+        $('#login_panel').replaceWith @obj
 
 base = new Base()
 conn = io.connect('http://' + document.location.host)
@@ -86,7 +86,7 @@ class TopObj
     update: (profiles, rates) ->
         if profiles != @cached_profiles and rates != @cached_rates
             @rates_obj = new RatesObj rates
-            @old_profiled = @profiles
+            @old_profiles = @profiles
             @profiles = (new Profile profile, @rates_obj.get(profile.uid) for profile in profiles)
             @cached_profiles = profiles
             @cached_rates = rates
@@ -96,7 +96,7 @@ class TopObj
         @output = $(to)
         num = 0
         for profile in @profiles
-            if not @old_profiles[num] or @old_profiles[num].uid != profile.uid or @old_profiles[num].rate != profile.rate or @old_profiles[num].value != profile.value
+            if not @old_profiles or not @old_profiles[num] or @old_profiles[num].uid != profile.uid or @old_profiles[num].rate != profile.rate or @old_profiles[num].value != profile.value
                 if $('li[rel=' + num + ']').length
                     $('li[rel=' + num + ']').replaceWith profile.render(num)
                 else

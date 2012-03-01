@@ -1,3 +1,4 @@
+import re
 import tornadio2
 import asyncmongo
 import tornado
@@ -10,6 +11,7 @@ class BaseConnection(tornadio2.SocketConnection):
         self.uid = None
         self.timer = None
         self.skip = 50
+        self.filter = ''
 
     def on_close(self):
         if self.timer:
@@ -28,8 +30,15 @@ class BaseConnection(tornadio2.SocketConnection):
 
     @tornado.gen.engine
     def update(self):
+        if self.filter:
+            spec = {'$or': [
+                {'uid': self.filter},
+                {'screen_name': self.filter}
+            ]}
+        else:
+            spec=None
         (profiles,), error = yield tornado.gen.Task(
-            self.db.profiles.find, skip=self.skip,
+            self.db.profiles.find, spec=spec, skip=self.skip,
             limit=100, sort=[('rate', -1)]
         )
         if self.uid:
@@ -60,6 +69,12 @@ class BaseConnection(tornadio2.SocketConnection):
         if not self.timer:
             self.timer = tornado.ioloop.PeriodicCallback(self.update, 1000)
             self.timer.start()
+
+    @tornadio2.event('set_filter')
+    def set_filter(self, value):
+        result = re.search(r'([^v]*)(vk\.com|vkontakte\.ru)\/([^\/]*)(.*)', value)
+        if result:
+            self.filter = result.group(3)
 
     @tornadio2.event('set_limits')
     def set_limits(self, skip, limit):

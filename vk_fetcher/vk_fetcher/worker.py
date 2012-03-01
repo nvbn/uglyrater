@@ -39,12 +39,7 @@ class Fetcher(object):
         try:
             data = json.loads(body)
             name = data['name'] if data.get('name') else fetch.get_name_from_url(data['url'])
-            if not self.db.profiles.find({
-                '$or': [
-                    {'uid': name},
-                    {'screen_name': name}
-                ]
-            }).count():
+            if not self.db.profiles.find({'screen_name': name}).count():
                 profile = fetch.get_profile(name)
                 profile['rate'] = 0
                 self.db.profiles.insert(profile)

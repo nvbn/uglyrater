@@ -1,87 +1,26 @@
-!!! 5
-%html
-    %head
-        %title Uglyrater, новый рейтинг!
-        %link{:rel => "stylesheet", :href => "media/bootstrap/css/bootstrap.min.css", :type => "text/css"}
-        %link{:rel => "stylesheet", :href => "media/bootstrap/css/bootstrap-responsive.min.css", :type => "text/css"}
-        %link{:rel => "stylesheet", :href => "media/css/jquery.gritter.css", :type => "text/css"}
-        %link{:rel => "stylesheet", :href => "media/css/base.css", :type => "text/css"}
-        %script{:type => "text/javascript",
-            :src => "http://vkontakte.ru/js/api/openapi.js"}
-        %script{:type => "text/javascript"}
-            VK.init({apiId: {{VK_ID}}});
-        %script{:type => "text/javascript",
-            :src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/js/socket.io.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/js/jquery.tmpl.min.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/js/jquery.cookie.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/js/jquery.gritter.min.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/js/main.js"}
-        %script{:type => "text/javascript",
-            :src => "/media/bootstrap/js/bootstrap.min.js"}
-        %script#profile_tpl{:type => "text/x-jquery-tmpl"}
-            %li{:id => "${profile.uid}"}
-                %div{:class => 'list_elem'}
-                    %img{:class => 'av', :src => '${profile.photo}'}
-                    ${profile.first_name} ${profile.last_name}
-                    %a{:href => "#"}
-                        %i{:class => 'icon-arrow-up'}
-                    ${profile.rate}
-                    %a{:href => "#"}
-                        %i{:class => 'icon-arrow-down'}
-        %script#logout_tpl{:type => "text/x-jquery-tmpl"}
-            %div#user_data
-                %img{:class => 'av', :src => '${base.photo}'}
-                ${base.first_name} ${base.last_name}
-                %a{:href => '/logout/'} Выход
-        %script#login_tpl{:type => "text/x-jquery-tmpl"}
-            %a{:href => '/login/'} Авторизация
-    %body
-        %div{:class => "navbar navbar-fixed-top"}
-            %div{:class => 'navbar-inner'}
-                %div{:class => 'container'}
-                    %a{:class => "btn btn-navbar", 'data-toggle' => "collapse", 'data-target' => ".nav-collapse"}
-                        %span{:class => 'icon-bar'}
-                        %span{:class => 'icon-bar'}
-                        %span{:class => 'icon-bar'}
-                    %a{:class => 'brand', :href => '/'}
-                        UglyRater
-                    %div{:class => 'nav-collapse'}
-                        %ul{:class => 'nav'}
-                            %li{:class => 'active'}
-                                %a{:href => '/'}
-                                    Рейтинг
-                            %li
-                                %a{:href => "/ext/"}
-                                    Расширения
-                            %li
-                                %a{:href => "/about/"}
-                                    О проекте
-                        %ul{:class => 'nav pull-right'}
-                            %li{:class => 'divider-vertical'}
-                            %li#login_panel
-        #page{:class => 'container'}
-            %div{:class => 'span12'}
-                #main
-                    %div{:class => 'hero-unit row'}
-                        %div{:class => 'span5'}
-                            %h2{:class => 'bottomed'} Добавить пользователя в рейтинг
-                            %div{:class => 'input-prepend bottomed'}
-                                %span{:class => 'add-on'}
-                                    Старница ВКонтакте:
-                                %input#url{:type => "text", :placeholder => 'http://vk.com/.....', :class => 'input-medium span3'}
-                            %a#add{:class=> 'btn-primary btn-large', :href => '#'} Добавить!
-                        %div{:class => 'span5'}
-                            %p После этого пользователь автомтически появится в рейтинге и вы сможете проголосовать.
-                            %p Если пользователь уже существует - вы увидите его в отфильтрованом списке.
-                    %ol#list
-                #loader
-                    %p Подождите, идёт загрузка.
-                    %img{:src => 'media/images/ajax-loader.gif'}
+{% extends "base.html" %}
 
+{% block rate-menu %}active{% end %}
 
+{% block content %}
+#main
+    %div{:class => 'hero-unit row'}
+        %div{:class => 'span5'}
+            %h2{:class => 'bottomed'} Добавить пользователя в рейтинг
+            %div{:class => 'input-prepend bottomed'}
+                %span{:class => 'add-on'}
+                    Страница ВКонтакте:
+                %input#url{:type => "text", :placeholder => 'http://vk.com/.....', :class => 'input-medium span3'}
+            %a#add{:class=> 'btn-primary btn-large', :href => '#'} Добавить!
+        %div{:class => 'span5'}
+            %p После этого пользователь автомтически появится в рейтинге и вы сможете проголосовать.
+            %p Если пользователь уже существует - вы увидите его в отфильтрованом списке.
+    %div{:class => 'row centroider'}
+        %div{:class => 'span5'}
+            %ol#list
+        #static{:class => 'span5 well'}
+            {% module Template("static_news.html") %}
+#loader
+    %p Подождите, идёт загрузка.
+    %img{:src => 'media/images/ajax-loader.gif'}
+{% end %}
