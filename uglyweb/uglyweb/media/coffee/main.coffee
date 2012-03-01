@@ -32,7 +32,7 @@ class Base
         $('#login_panel').html @obj
 
 base = new Base()
-conn = io.connect('http://uglyrater.org')
+conn = io.connect('http://' + document.location.host)
 
 class RatesObj
     constructor: (rates) ->
@@ -79,9 +79,9 @@ class Profile
 
 
 class TopObj
-    cached_profiles: null
-    cached_rates: null
-    old_profiles: null
+    cached_profiles: {}
+    cached_rates: {}
+    old_profiles: {}
 
     update: (profiles, rates) ->
         if profiles != @cached_profiles and rates != @cached_rates
@@ -94,11 +94,10 @@ class TopObj
 
     render: (to) ->
         @output = $(to)
-        $(to).empty()
         num = 0
         for profile in @profiles
             if not @old_profiles[num] or @old_profiles[num].uid != profile.uid or @old_profiles[num].rate != profile.rate or @old_profiles[num].value != profile.value
-                if $('li[rel=' + num + ']')
+                if $('li[rel=' + num + ']').length
                     $('li[rel=' + num + ']').replaceWith profile.render(num)
                 else
                     $(to).append profile.render(num)

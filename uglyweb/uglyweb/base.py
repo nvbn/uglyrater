@@ -9,6 +9,7 @@ class BaseConnection(tornadio2.SocketConnection):
         super(BaseConnection, self).__init__(*args, **kwargs)
         self.uid = None
         self.timer = None
+        self.skip = 50
 
     def on_close(self):
         if self.timer:
@@ -28,7 +29,7 @@ class BaseConnection(tornadio2.SocketConnection):
     @tornado.gen.engine
     def update(self):
         (profiles,), error = yield tornado.gen.Task(
-            self.db.profiles.find,
+            self.db.profiles.find, skip=self.skip,
             limit=100, sort=[('rate', -1)]
         )
         if self.uid:
@@ -59,6 +60,13 @@ class BaseConnection(tornadio2.SocketConnection):
         if not self.timer:
             self.timer = tornado.ioloop.PeriodicCallback(self.update, 1000)
             self.timer.start()
+
+    @tornadio2.event('set_limits')
+    def set_limits(self, skip, limit):
+        self.skip = skip
+        if limit > 100:
+            limit = 100
+        self.limit = limit
 
     @tornadio2.event('authorise')
     @tornado.gen.engine
@@ -122,7 +130,6 @@ class BaseConnection(tornadio2.SocketConnection):
                 'url': url
             })
             self.update()
-
 
 
 class BaseHandler(tornado.web.RequestHandler):
