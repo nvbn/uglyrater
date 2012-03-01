@@ -97,12 +97,9 @@ class TopObj
         @output.empty()
         num = 0
         for profile in @profiles
-#            if not @old_profiles or not @old_profiles[num] or @old_profiles[num].uid != profile.uid or @old_profiles[num].rate != profile.rate or @old_profiles[num].value != profile.value
-#                if $('li[rel=' + num + ']').length
-#                    $('li[rel=' + num + ']').replaceWith profile.render(num)
-#                else
-            $(to).append profile.render(num)
-            num += 1
+            do (profile) =>
+                $(to).append profile.render(num)
+                num += 1
 
 top_obj = new TopObj()
 
