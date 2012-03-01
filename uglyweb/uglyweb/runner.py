@@ -34,6 +34,7 @@ class AboutHandler(BaseHandler):
         self.render('templates/about.html', VK_ID=self.settings['client_id'])
 
 
+@Route(r'/login/')
 class VKHandler(BaseHandler, VKMixin):
     @tornado.web.asynchronous
     def get(self):
@@ -66,6 +67,7 @@ class VKHandler(BaseHandler, VKMixin):
         self.redirect("/")
 
 
+@Route(r'/logout/')
 class LogoutHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
